@@ -1,0 +1,30 @@
+{
+  "name": "geohashes-near",
+  "version": "1.0.0",
+  "description": "Helper function to get list of geohashes given a coordinate and inside a radius",
+  "main": "index.js",
+  "author": "Alberto Rico",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.4",
+    "eslint-plugin-jest": "^23.8.2",
+    "jest": "^25.5.4"
+  },
+  "dependencies": {
+    "@turf/distance": "^6.0.1",
+    "@turf/helpers": "^6.1.4",
+    "ngeohash": "^0.6.3"
+  },
+  "scripts": {
+    "test": "jest",
+    "prepublish": "yarn test"
+  },
+  "repository": {
+    "url": "https://github.com/alrico88/geohashes-near"
+  },
+  "keywords": [
+    "geohash",
+    "radius",
+    "list"
+  ]
+}

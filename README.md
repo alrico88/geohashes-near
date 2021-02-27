@@ -10,9 +10,23 @@ Using yarn: `yarn add geohashes-near`
 
 ## Usage
 
-```javascript
-const getHashesNear = require('geohash-near');
+Fist import the module
 
+### In a CommonJS env
+
+```javascript
+const getHashesNear = require('geohashes-near');
+```
+
+### Using ES imports
+
+```javascript
+import getHashesNear from 'geohashes-near';
+```
+
+And then run the function
+
+```javascript
 const position = { latitude: 40.455438, longitude: -3.693636 };
 const radius = 20; // 20 meters
 const units = 'meters';
@@ -24,77 +38,51 @@ const hashesInRadius = getHashesNear(position, precision, radius, units);
 
 ![Result](https://i.imgur.com/fd8QpwN.png)
 
+## Table of contents
+
+### Type aliases
+
+- [Coord](modules.md#coord)
+
+### Functions
+
+- [default](modules.md#default)
+
+## Type aliases
+
+### Coord
+
+Ƭ **Coord**: _object_
+
+#### Type declaration:
+
+| Name        | Type     |
+| :---------- | :------- |
+| `latitude`  | _number_ |
+| `longitude` | _number_ |
+
+Defined in: index.ts:15
+
 ## Functions
 
-<dl>
-<dt><a href="#isInRadius">isInRadius(from, to, radius, units)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Checks if destination point is inside radius</p>
-</dd>
-<dt><a href="#getHashesNear">getHashesNear(coord, precision, radius, units)</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
-<dd><p>Gets geohashes of a certain precision near the given coordinate</p>
-</dd>
-</dl>
+### default
 
-## Typedefs
-
-<dl>
-<dt><a href="#Coord">Coord</a></dt>
-<dd></dd>
-</dl>
-
-<a name="Units"></a>
-
-## Units
-
-**Kind**: global enum  
-**Properties**
-
-| Name       | Default                 |
-| ---------- | ----------------------- |
-| miles      | <code>miles</code>      |
-| kilometers | <code>kilometers</code> |
-| meters     | <code>meters</code>     |
-
-<a name="isInRadius"></a>
-
-## isInRadius(from, to, radius, units) ⇒ <code>boolean</code>
-
-Checks if destination point is inside radius
-
-**Kind**: global function  
-**Returns**: <code>boolean</code> - Whether the point is inside radius
-
-| Param  | Type                                                                                                     | Description                                       |
-| ------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| from   | <code>Point</code>                                                                                       | Geographic point from                             |
-| to     | <code>Point</code>                                                                                       | Geographic point to                               |
-| radius | <code>number</code>                                                                                      | The radius in which to find neighboring geohashes |
-| units  | <code>&#x27;miles&#x27;</code> \| <code>&#x27;kilometers&#x27;</code> \| <code>&#x27;meters&#x27;</code> | Units for radius                                  |
-
-<a name="getHashesNear"></a>
-
-## getHashesNear(coord, precision, radius, units) ⇒ <code>Array.&lt;string&gt;</code>
+▸ **default**(`coord`: [_Coord_](modules.md#coord), `precision`: _number_, `radius`: _number_, `units`: Units, `maskPolygon?`: Polygon \| MultiPolygon): _string_[]
 
 Gets geohashes of a certain precision near the given coordinate
 
-**Kind**: global function  
-**Returns**: <code>Array.&lt;string&gt;</code> - Array of neighbouring geohashes in radius
+#### Parameters:
 
-| Param     | Type                                                                                                     | Description                                       |
-| --------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| coord     | [<code>Coord</code>](#Coord)                                                                             | The central coordinate                            |
-| precision | <code>number</code>                                                                                      | The geohash precision                             |
-| radius    | <code>number</code>                                                                                      | The radius in which to find neighboring geohashes |
-| units     | <code>&#x27;miles&#x27;</code> \| <code>&#x27;kilometers&#x27;</code> \| <code>&#x27;meters&#x27;</code> | Units for radius                                  |
+| Name           | Type                        | Description                                                  |
+| :------------- | :-------------------------- | :----------------------------------------------------------- |
+| `coord`        | [_Coord_](modules.md#coord) | The central coordinate                                       |
+| `precision`    | _number_                    | The geohash precision                                        |
+| `radius`       | _number_                    | The radius in which to find neighboring geohashes            |
+| `units`        | Units                       | Units for radius                                             |
+| `maskPolygon?` | Polygon \| MultiPolygon     | Polygon to use as mask to filter geohashes by their centroid |
 
-<a name="Coord"></a>
+**Returns:** _string_[]
 
-## Coord
+Array of neighbouring geohashes in radius
 
-**Kind**: global typedef  
-**Properties**
-
-| Name      | Type                | Description          |
-| --------- | ------------------- | -------------------- |
-| latitude  | <code>number</code> | Coordinate latitude  |
-| longitude | <code>number</code> | Coordinate longitude |
+Defined in: index.ts:75

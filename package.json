@@ -1,6 +1,6 @@
 {
   "name": "geohashes-near",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Helper function to get list of geohashes given a coordinate and inside a radius",
   "main": "dist/index.js",
   "module": "dist/geohashes-near.esm.js",

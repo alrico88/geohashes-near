@@ -39,8 +39,7 @@
     "@turf/circle": "^6.3.0",
     "@turf/distance": "^6.3.0",
     "@turf/helpers": "^6.1.4",
-    "ngeohash": "^0.6.3",
-    "shape2geohash": "^1.2.5"
+    "ngeohash": "^0.6.3"
   },
   "size-limit": [
     {

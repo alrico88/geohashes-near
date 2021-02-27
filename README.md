@@ -42,11 +42,11 @@ const hashesInRadius = getHashesNear(position, precision, radius, units);
 
 ### Type aliases
 
-- [Coord](modules.md#coord)
+- [Coord](#coord)
 
 ### Functions
 
-- [default](modules.md#default)
+- [default](#default)
 
 ## Type aliases
 
@@ -67,19 +67,19 @@ Defined in: index.ts:15
 
 ### default
 
-▸ **default**(`coord`: [_Coord_](modules.md#coord), `precision`: _number_, `radius`: _number_, `units`: Units, `maskPolygon?`: Polygon \| MultiPolygon): _string_[]
+▸ **default**(`coord`: [_Coord_](#coord), `precision`: _number_, `radius`: _number_, `units`: Units, `maskPolygon?`: Polygon \| MultiPolygon): _string_[]
 
 Gets geohashes of a certain precision near the given coordinate
 
 #### Parameters:
 
-| Name           | Type                        | Description                                                  |
-| :------------- | :-------------------------- | :----------------------------------------------------------- |
-| `coord`        | [_Coord_](modules.md#coord) | The central coordinate                                       |
-| `precision`    | _number_                    | The geohash precision                                        |
-| `radius`       | _number_                    | The radius in which to find neighboring geohashes            |
-| `units`        | Units                       | Units for radius                                             |
-| `maskPolygon?` | Polygon \| MultiPolygon     | Polygon to use as mask to filter geohashes by their centroid |
+| Name           | Type                    | Description                                                  |
+| :------------- | :---------------------- | :----------------------------------------------------------- |
+| `coord`        | [_Coord_](#coord)       | The central coordinate                                       |
+| `precision`    | _number_                | The geohash precision                                        |
+| `radius`       | _number_                | The radius in which to find neighboring geohashes            |
+| `units`        | Units                   | Units for radius                                             |
+| `maskPolygon?` | Polygon \| MultiPolygon | Polygon to use as mask to filter geohashes by their centroid |
 
 **Returns:** _string_[]
 

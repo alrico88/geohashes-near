@@ -27,7 +27,7 @@
     "dev": "rslib build --watch",
     "format": "biome format --write",
     "test": "vitest run",
-    "prepublish": "build"
+    "prepublish": "rslib build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

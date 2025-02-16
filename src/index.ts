@@ -1,7 +1,8 @@
-import {Feature, MultiPolygon, point, Point, Polygon, Units} from '@turf/helpers';
-import {encode, decode, neighbors, decode_bbox} from 'ngeohash';
+import { point, type Units } from '@turf/helpers';
+import { encode, decode, neighbors, decode_bbox } from 'ngeohash';
 import distance from '@turf/distance';
 import isPointInPolygon from '@turf/boolean-point-in-polygon';
+import type { Feature, MultiPolygon, Point, Polygon } from 'geojson';
 
 /**
  * Units enum
@@ -17,6 +18,8 @@ export type Coord = {
   longitude: number;
 };
 
+const KM_TO_METERS = 1000;
+
 /**
  * Checks if destination point is inside radius
  *
@@ -26,13 +29,17 @@ export type Coord = {
  * @param {Units} units Units for radius
  * @returns {boolean} Whether the point is inside radius
  */
-function isInRadius(from: Feature<Point>, to: Feature<Point>, radius: number, units: Units): boolean {
+function isInRadius(
+  from: Feature<Point>,
+  to: Feature<Point>,
+  radius: number,
+  units: Units,
+): boolean {
   const unitsToUse = units === UnitsEnum.Meters ? UnitsEnum.Kilometers : units;
 
-  let dist = distance(from, to, {units: unitsToUse});
+  let dist = distance(from, to, { units: unitsToUse });
   if (units === UnitsEnum.Meters) {
-    const kilometersToMeters = 1000;
-    dist *= kilometersToMeters;
+    dist *= KM_TO_METERS;
   }
 
   return dist <= radius;
@@ -49,17 +56,24 @@ function isInMask(geohash: string, mask: Polygon | MultiPolygon): boolean {
   const [minLon, minLat, maxLon, maxLat] = decode_bbox(geohash);
   const centroid = decode(geohash);
 
-  const points = [[minLon, minLat], [minLon, maxLat], [maxLon, minLat], [maxLon, maxLat], [centroid.longitude, centroid.latitude]];
-
-  const isInside = false;
-
-  for (const [longitude, latitude] of points) {
-    if (isPointInPolygon([longitude, latitude], mask, {ignoreBoundary: true})) {
-      return true;
-    }
+  if (
+    isPointInPolygon([centroid.longitude, centroid.latitude], mask, {
+      ignoreBoundary: true,
+    })
+  ) {
+    return true;
   }
 
-  return isInside;
+  const points = [
+    [minLon, minLat],
+    [minLon, maxLat],
+    [maxLon, minLat],
+    [maxLon, maxLat],
+  ];
+
+  return points.some(([longitude, latitude]) =>
+    isPointInPolygon([longitude, latitude], mask, { ignoreBoundary: true }),
+  );
 }
 
 /**
@@ -72,8 +86,14 @@ function isInMask(geohash: string, mask: Polygon | MultiPolygon): boolean {
  * @param {Feature<Polygon | MultiPolygon>} [maskPolygon] Polygon to use as mask to filter geohashes by their centroid
  * @returns {string[]} Array of neighbouring geohashes in radius
  */
-export default function getHashesNear(coord: Coord, precision: number, radius: number, units: Units, maskPolygon?: Polygon | MultiPolygon): string[] {
-  const {latitude: originLatitude, longitude: originLongitude} = coord;
+export default function getHashesNear(
+  coord: Coord,
+  precision: number,
+  radius: number,
+  units: Units,
+  maskPolygon?: Polygon | MultiPolygon,
+): string[] {
+  const { latitude: originLatitude, longitude: originLongitude } = coord;
   const origin = point([originLongitude, originLatitude]);
   const encodedOrigin = encode(originLatitude, originLongitude, precision);
 
@@ -81,24 +101,27 @@ export default function getHashesNear(coord: Coord, precision: number, radius: n
   const toCheck: Set<string> = new Set();
   const valid: string[] = [];
 
-  neighbors(encodedOrigin).forEach((hash) => {
+  for (const hash of neighbors(encodedOrigin)) {
     toCheck.add(hash);
-  });
+  }
 
   function finishedWithHash(hash: string): void {
     toCheck.delete(hash);
     checked.add(hash);
   }
 
-  function proceedWithLoop(hash: string, latitude: number, longitude: number): void {
+  function proceedWithLoop(
+    hash: string,
+    latitude: number,
+    longitude: number,
+  ): void {
     const destination = point([longitude, latitude]);
     if (isInRadius(origin, destination, radius, units)) {
       valid.push(hash);
-      neighbors(hash)
-        .filter((d) => !checked.has(d))
-        .forEach((neighbour) => {
-          toCheck.add(neighbour);
-        });
+
+      for (const neighbour of neighbors(hash).filter((d) => !checked.has(d))) {
+        toCheck.add(neighbour);
+      }
     }
     finishedWithHash(hash);
   }
@@ -107,8 +130,8 @@ export default function getHashesNear(coord: Coord, precision: number, radius: n
 
   while (toCheck.size > empty) {
     const iterator = toCheck.keys();
-    const hash = iterator.next().value;
-    const {latitude, longitude} = decode(hash);
+    const hash = iterator.next().value as string;
+    const { latitude, longitude } = decode(hash);
     if (maskPolygon) {
       const passesCheck = isInMask(hash, maskPolygon);
       if (passesCheck) {

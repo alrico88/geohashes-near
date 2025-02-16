@@ -1,68 +1,40 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import getHashesNear from '../src/';
 import distance from '@turf/distance';
-import {point, Feature, Polygon} from '@turf/helpers';
-import {decode} from 'ngeohash';
+import { point } from '@turf/helpers';
+import { decode } from 'ngeohash';
+import type { Feature, Polygon } from 'geojson';
+import { expect, describe, it } from 'vitest';
 
 const bigMask: Feature<Polygon> = {
-  'type': 'Feature',
-  'properties': {},
-  'geometry': {
-    'type': 'Polygon',
-    'coordinates': [
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'Polygon',
+    coordinates: [
       [
-        [
-          -4.592285156249999,
-          39.41497702499074,
-        ],
-        [
-          -2.373046875,
-          39.41497702499074,
-        ],
-        [
-          -2.373046875,
-          41.611335399441735,
-        ],
-        [
-          -4.592285156249999,
-          41.611335399441735,
-        ],
-        [
-          -4.592285156249999,
-          39.41497702499074,
-        ],
+        [-4.592285156249999, 39.41497702499074],
+        [-2.373046875, 39.41497702499074],
+        [-2.373046875, 41.611335399441735],
+        [-4.592285156249999, 41.611335399441735],
+        [-4.592285156249999, 39.41497702499074],
       ],
     ],
   },
 };
 
 const smallMask: Feature<Polygon> = {
-  'type': 'Feature',
-  'properties': {},
-  'geometry': {
-    'type': 'Polygon',
-    'coordinates': [
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'Polygon',
+    coordinates: [
       [
-        [
-          -3.694667816162109,
-          40.45465411266823,
-        ],
-        [
-          -3.6927795410156246,
-          40.45465411266823,
-        ],
-        [
-          -3.6927795410156246,
-          40.45648277516808,
-        ],
-        [
-          -3.694667816162109,
-          40.45648277516808,
-        ],
-        [
-          -3.694667816162109,
-          40.45465411266823,
-        ],
+        [-3.694667816162109, 40.45465411266823],
+        [-3.6927795410156246, 40.45465411266823],
+        [-3.6927795410156246, 40.45648277516808],
+        [-3.694667816162109, 40.45648277516808],
+        [-3.694667816162109, 40.45465411266823],
       ],
     ],
   },
@@ -77,16 +49,11 @@ const originCoord = {
   longitude: coord[0],
 };
 
-const hashesNear = getHashesNear(
-  originCoord,
-  precision,
-  radius,
-  units
-);
+const hashesNear = getHashesNear(originCoord, precision, radius, units);
 
 describe('Obtaining neighbouring geohashes', () => {
   it('Getting finite number of geohashes inside area', () => {
-    expect(hashesNear.length).toBeLessThan(Infinity);
+    expect(hashesNear.length).toBeLessThan(Number.POSITIVE_INFINITY);
   });
 
   it('Resulting geohashes should be of desired length', () => {
@@ -99,10 +66,10 @@ describe('Obtaining neighbouring geohashes', () => {
     const distanceConversion = 1000;
     const empty = 0;
     const outsideRadius = hashesNear.filter((d) => {
-      const {latitude, longitude} = decode(d);
+      const { latitude, longitude } = decode(d);
       const destination = point([longitude, latitude]);
-      const dist
-        = distance(origin, destination, {
+      const dist =
+        distance(origin, destination, {
           units: 'kilometers',
         }) * distanceConversion;
       return dist > radius;
@@ -113,13 +80,25 @@ describe('Obtaining neighbouring geohashes', () => {
 
 describe('Test masking radius with GeoJSON', () => {
   it('Should return the same geohashes in radios if mask is bigger than radios', () => {
-    const hashesNearWithMask = getHashesNear(originCoord, precision, radius, units, bigMask.geometry);
+    const hashesNearWithMask = getHashesNear(
+      originCoord,
+      precision,
+      radius,
+      units,
+      bigMask.geometry,
+    );
 
     expect(hashesNearWithMask).toStrictEqual(hashesNear);
   });
 
   it('Should return the less geohashes in radios if mask is smaller than radios', () => {
-    const hashesNearWithMask = getHashesNear(originCoord, precision, radius, units, smallMask.geometry);
+    const hashesNearWithMask = getHashesNear(
+      originCoord,
+      precision,
+      radius,
+      units,
+      smallMask.geometry,
+    );
 
     expect(hashesNearWithMask.length).toBeLessThan(hashesNear.length);
   });
